@@ -8,6 +8,9 @@ var ground;
 var boxes=[];
 var polyimage;
 
+var score = 0;
+textColor = "white";
+
 function preload(){
     polyimage = loadImage("polygon.png");
 
@@ -59,12 +62,20 @@ function setup(){
 }
 
 function draw(){
-    background(0);
+    if (getBackground()){
+        background ("white");
+        console.log("white");
+    } else {
+        background(0);
+        console.log("black");
+    }
+
     Engine.update(engine);
     ground.display();
 
     for(var I=0; I<boxes.length; I++){
         boxes[I].display();
+        boxes[I].score();
     }
     stand1.display();
     stand2.display();
@@ -72,6 +83,8 @@ function draw(){
     imageMode (CENTER);
     image (polyimage, box1.position.x, box1.position.y, 40, 40);
     slingshot.display();
+
+    text ("Score : " + score, 750, 40);
    
 }
 
@@ -81,4 +94,26 @@ function mouseDragged (){
 
 function mouseReleased (){
     slingshot.fly();
+}
+
+function keyPressed (){
+    if (keyCode==32){
+        slingshot.attach(this.box1);
+    }
+}
+
+
+async function getBackground() {
+    var response = await fetch ("http://worldtimeapi.org/api/timezone/Asia/Tokyo");
+    var responseJSON = await response.json();
+    var dt = responseJSON.datetime;
+    var r = dt.slice(11, 13);
+
+    if (r>=06 && r<=19){
+
+        return true;
+    } else {
+        return false;
+  
+    }
 }
